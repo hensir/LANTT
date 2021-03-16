@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>312</width>
+    <height>766</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>766</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="Stab">
+       <attribute name="title">
+        <string>Server</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="Sgb">
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QToolButton" name="StB1">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>选择文件</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <property name="popupMode">
+              <enum>QToolButton::DelayedPopup</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
+             </property>
+             <property name="arrowType">
+              <enum>Qt::NoArrow</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="StB2">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>选择文件夹</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QToolButton" name="StB3">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>设置端口</string>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QToolButton" name="StB4">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>设置线程</string>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QToolButton" name="StB5">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>连接热点</string>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QToolButton" name="StB6">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>传送文本</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QToolButton" name="StB7">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>开启服务</string>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QToolButton" name="StB8">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>停止服务</string>
+             </property>
+             <property name="autoRaise">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTextEdit" name="StE"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="Ctab">
+       <attribute name="title">
+        <string>Client</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="Cgb">
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="0" column="0">
+            <widget class="QToolButton" name="CtB1">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>设置服务器IP</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="CtB2">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>接收文件地址</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QToolButton" name="CtB3">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>设置端口</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QToolButton" name="CtB4">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>设置线程</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QToolButton" name="CtB5">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>开启热点</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QToolButton" name="CtB6">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>接收文本</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QToolButton" name="CtB7">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>占位按钮</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QToolButton" name="CtB8">
+             <property name="minimumSize">
+              <size>
+               <width>122</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>开启服务</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTextEdit" name="CtE"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

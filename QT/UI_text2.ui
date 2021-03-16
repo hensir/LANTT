@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1215</width>
+    <height>684</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1215</width>
+    <height>684</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1215</width>
+    <height>684</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>输入要传送的文本</string>
+  </property>
+  <widget class="QTextEdit" name="tE">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1215</width>
+     <height>684</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>1215</width>
+     <height>684</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>1215</width>
+     <height>684</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>20</pointsize>
+     <stylestrategy>PreferAntialias</stylestrategy>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-image: url(:/pic/1 (29).jpg);</string>
+   </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:20pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="placeholderText">
+    <string>输入</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="tB2">
+   <property name="geometry">
+    <rect>
+     <x>1178</x>
+     <y>0</y>
+     <width>37</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial Black</family>
+     <pointsize>14</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>X</string>
+   </property>
+   <property name="autoRaise">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="tB1">
+   <property name="geometry">
+    <rect>
+     <x>1113</x>
+     <y>0</y>
+     <width>65</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>确认</string>
+   </property>
+   <property name="popupMode">
+    <enum>QToolButton::DelayedPopup</enum>
+   </property>
+   <property name="autoRaise">
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="UI_text2.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>tB1</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1145</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>607</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tB2</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1196</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>607</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
