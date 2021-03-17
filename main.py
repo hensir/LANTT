@@ -7,16 +7,14 @@ from base64 import b64decode, b64encode
 from pywifi import const, PyWiFi, Profile
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt5.QtCore import pyqtSlot, QDir, Qt, pyqtSignal
+from PyQt5.QtGui import QColor
 from ui_mainwindow import Ui_MainWindow
 from dialog import DialogPort, DialogThread, DialogText, DialogGetIP
 
 
 # TODO 异步IO
-# TODO sendbin和getbin作为一个单独函数都是为了从主线程中批出来一个线程 而不影响主UI
-# TODO
-# TODO
-# TODO
-# TODO
+# TODO 把整个文件的fileinfo都发给client    然后大小除以缓冲区的大小 这个就有了一个progressbar的max数值    最后recv一次就是一个step
+# TODO 传送文本可优化 开启/停止服务也是有点问题的
 
 class Mymainwindow(QMainWindow):
     """我的窗体类"""
@@ -35,6 +33,7 @@ class Mymainwindow(QMainWindow):
         else:
             self.ui.tabWidget.setCurrentIndex(1)
         # ------tabServer的设置------
+        self.ui.StE.setTextColor(QColor(0, 255, 0))
         self._filelist = []
         self._ServerFileFolder = sys.argv[0][:sys.argv[0].rfind('/') + 1]
         self._ServerFFF = QDir(self._ServerFileFolder).entryList(QDir.Files | QDir.NoDot)  # 文件夹下的文件
@@ -42,14 +41,17 @@ class Mymainwindow(QMainWindow):
         self._ServerThreadNum = 2
         self._ServerText2Send = None
         self._textDialog = None
+        self.ServerStatus = False  # 做给线程轮询判断 用来断开服务
         self.initStE()
         # ------tabClient的设置------
+        self.ui.CtE.setTextColor(QColor(0, 255, 0))
         self._ClientFileFolder = sys.argv[0][:sys.argv[0].rfind('/') + 1]
         self._ClientConnIP = "192.168.6.120"
         self._ClientConnPort = 23719
         self._ClientThreadNum = 6
         self._ClientText2Recv = None
         self._ClientGetIPDialog = None
+        self.ClientStatus = False  # 做给线程轮询判断 用来断开服务
         self.initCtE()
 
     def initStE(self):
@@ -58,25 +60,30 @@ class Mymainwindow(QMainWindow):
         text2 = "当前IP地址为:\n" + socket.gethostbyname(socket.gethostname()) + "\n"
         text3 = "缺省端口为:\n" + str(self._ServerPort) + "\n"
         text4 = "发送线程数量为:\n" + str(self._ServerThreadNum) + "\n"
-        text5 = ""
+        text6 = ""
         # ------文件和文件夹只能显示一个------
         if self.ui.StB1.isChecked():
-            text5 += "当前所选文件为:\n"
+            text6 += "当前所选文件为:\n"
             for i in self._filelist:
-                text5 += i + '\n'
+                text6 += i + '\n'
         elif self.ui.StB2.isChecked():
-            text5 += "当前所选文件夹为:\n"
-            text5 += self._ServerFileFolder
+            text6 += "当前所选文件夹为:\n"
+            text6 += self._ServerFileFolder
             if len(self._ServerFFF) == 0:
-                text5 += "\n该文件夹下没有文件"
+                text6 += "\n该文件夹下没有文件"
             else:
-                text5 += "\n该文件夹下有以下文件:"
+                text6 += "\n该文件夹下有以下文件:"
             for filetext in self._ServerFFF:
-                text5 += ("\n   %s" % filetext)
+                text6 += ("\n   %s" % filetext)
         elif self.ui.StB6.isChecked():
-            text5 += "当前所选文本为:\n"
-            text5 += self._ServerText2Send
-        self.ui.StE.setText(text1 + text2 + text3 + text4 + text5)
+            text6 += "当前所选文本为:\n"
+            text6 += self._ServerText2Send
+        self.ui.StE.setText(text1 + text2 + text3 + text4 + text6)
+
+        if self.ServerStatus:
+            self.ui.statusBar.showMessage("当前服务已开启 请直接选择文件或者改变文本")
+        else:
+            self.ui.statusBar.showMessage("当前服务未开启")
 
     def initCtE(self):
         """程序开始时打印Cte要显示的文本"""
@@ -87,6 +94,11 @@ class Mymainwindow(QMainWindow):
         text5 = "接收线程数量为:\n" + str(self._ClientThreadNum) + "\n"
         text6 = "接收文件地址为:\n" + self._ClientFileFolder
         self.ui.CtE.setText(text1 + text2 + text3 + text4 + text5 + text6)
+
+        # if self.ClientStatus and (self.ui.tabWidget.currentIndex() != 1):
+        #     self.ui.statusBar.showMessage("开始接收数据")
+        # else:
+        #     self.ui.statusBar.showMessage("数据接收已停止")
 
     # -------TabServer的按钮-------
 
@@ -190,8 +202,15 @@ class Mymainwindow(QMainWindow):
         """开启服务按钮"""
         # -----改变按钮状态----
         # 这里主要开一个多线程
+        self.ServerStatus = True
+        self.ui.statusBar.showMessage("当前服务已开启 请直接选择文件或者改变文本")
         t = Thread(target=self.sendbin)
         t.start()
+
+    @pyqtSlot()
+    def on_StB8_clicked(self):
+        self.ServerStatus = False
+        self.ui.statusBar.showMessage("当前服务已关闭")
 
     def sendbin(self):
         """专门用于发送二进制数据的静态函数"""
@@ -201,38 +220,40 @@ class Mymainwindow(QMainWindow):
         context.load_cert_chain(r".\python_test.cer", r".\python_test.key")
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.bind(('127.0.0.1', 6666))
-            self.ui.StE.append("已开启服务")
             sock.listen(5)
             with context.wrap_socket(sock, server_side=True) as ssock:
                 while True:
-                    print("本地服务端地址:s%s" % ssock.getsockname)
-                    client, addr = ssock.accept()
-                    print("客户端地址:%s:%s" % addr)
-
-                    if self.ui.StB1.isChecked():
-                        # 打包 self._filelist     这里静态检查有误
-                        for filename in [self._filelist]:
-                            client.send(filename.encode('utf-8'))
-                            print(filename)
-                            with open(filename, 'rb') as f:
-                                data = b64encode(f.read())
-                            client.sendall(data)
-                            client.send(b'next')
-                    elif self.ui.StB2.isChecked():
-                        # 打包 self._ServerFFF
-                        for filename in self._ServerFFF:
-                            client.send(filename.encode('utf-8'))
-                            print(filename)
-                            with open(filename, 'rb') as f:
-                                data = b64encode(f.read())
-                            client.sendall(data)
-                            client.send(b'next')
-                    elif self.ui.StB6.isChecked():
-                        # 打包 self._ServerText2Send
-                        client.send("text".encode('utf-8'))
-                        print(self._ServerText2Send)
-                        client.send(self._ServerText2Send.encode('utf-8'))
-
+                    if self.ServerStatus:
+                        print("本地服务端地址:s%s" % ssock.getsockname)
+                        client, addr = ssock.accept()
+                        print("客户端地址:%s:%s" % addr)  # 静态检查错误
+                        if self.ui.StB1.isChecked():
+                            # 打包 self._filelist     这里静态检查有误
+                            for filename in [self._filelist]:
+                                client.send(filename.encode('utf-8'))
+                                print(filename)
+                                with open(filename, 'rb') as f:
+                                    data = b64encode(f.read())
+                                client.sendall(data)
+                                client.send(b'next')
+                        elif self.ui.StB2.isChecked():
+                            # 打包 self._ServerFFF
+                            for filename in self._ServerFFF:
+                                client.send(filename.encode('utf-8'))
+                                print(filename)
+                                with open(filename, 'rb') as f:
+                                    data = b64encode(f.read())
+                                client.sendall(data)
+                                client.send(b'next')
+                        elif self.ui.StB6.isChecked():
+                            # 打包 self._ServerText2Send
+                            client.send("text".encode('utf-8'))  # 我给了一个信号
+                            print(self._ServerText2Send)
+                            client.send(b64encode(self._ServerText2Send.encode('utf-8')))
+                            print("编码后的字符串")
+                            print(b64encode(self._ServerText2Send.encode('utf-8')))
+                    else:
+                        break
                     client.send(b'exit')
                     client.close()
 
@@ -287,12 +308,39 @@ class Mymainwindow(QMainWindow):
     @pyqtSlot()
     def on_CtB6_clicked(self):
         """接收文本按钮"""
-        pass
+        try:
+            context = ssl._create_unverified_context()
+            with socket.socket() as sock:
+                with context.wrap_socket(sock, server_hostname='127.0.0.1') as ssock:
+                    ssock.connect(('127.0.0.1', 6666))
+                    print("本地地址:%s" % str(ssock.getsockname()))
+                    # ----处理text----
+                    filename = ssock.recv(1024).decode('utf-8')
+
+                    if filename == "text":
+                        self.ui.CtE.append("接收的文本为:")
+                        in_data = bytes()
+                        data = ssock.recv(1024)
+                        while data:
+                            in_data += data
+                            data = ssock.recv(1024)
+                            if data.decode('utf-8') == 'exit':
+                                text = in_data.decode('utf-8')
+                                # text = text.decode()
+                                text = b64decode(text)
+                                text = text.decode()
+
+                                self.ui.CtE.append(text)
+                        self.ui.CtE.append("文本接收结束")
+                    return
+        except ConnectionRefusedError as e:
+            self.ui.CtE.append("连接失败")
+            self.ui.statusBar.showMessage("数据接收连接失败")
+            print(e)
 
     @pyqtSlot()
     def on_CtB7_clicked(self):
         """占位按钮"""
-
 
     @pyqtSlot()
     def on_CtB8_clicked(self):
@@ -300,67 +348,80 @@ class Mymainwindow(QMainWindow):
         ButtonState = self.ui.CtB8.text()
         if ButtonState == "开启服务":
             self.ui.CtB8.setText("关闭服务")
+            self.ui.statusBar.showMessage("数据接收已停止")
+            self.ClientStatus = True
         else:
             self.ui.CtB8.setText("开启服务")
+            self.ui.statusBar.showMessage("开始接收数据")
+            self.ClientStatus = False
 
-        self.getbin()
+        t = Thread(target=self.getbin)
+        t.start()
 
-    def getbin(self):       # TODO 这个不对
+    def getbin(self):
         """用以多线程接收文件"""
-        context = ssl._create_unverified_context()
-        with socket.socket() as sock:
-            with context.wrap_socket(sock, server_hostname='127.0.0.1') as ssock:
-                ssock.connect(('127.0.0.1', 6666))
-                print("本地地址:%s" % str(ssock.getsockname()))
-                while True:
-                    filename = ssock.recv(1024).decode('utf-8')
-                    if not filename or filename == 'exit':
-                        print(filename)
-                        break
-                    self.ui.CtE.append("文件名为:%s" % filename)
+        try:
+            context = ssl._create_unverified_context()
+            with socket.socket() as sock:
+                with context.wrap_socket(sock, server_hostname='127.0.0.1') as ssock:
+                    ssock.connect(('127.0.0.1', 6666))
+                    print("本地地址:%s" % str(ssock.getsockname()))
+                    # ----处理text----
+                    while True:
+                        if self.ClientStatus:
+                            filename = ssock.recv(1024).decode('utf-8')
+                            # ----处理文件----
+                            if not filename or filename == 'exit':
+                                print(filename)
+                                break
+                            self.ui.CtE.append("文件名为:%s" % filename)
 
-                    in_data = bytes()
-                    data = ssock.recv(1024)
-                    while data:
-                        in_data += data
-                        data = ssock.recv(1024)
-                        if data.decode('utf-8') == 'next':
+                            in_data = bytes()
+                            data = ssock.recv(1024)
+                            while data:
+                                in_data += data
+                                data = ssock.recv(1024)
+                                if data.decode('utf-8') == 'next':
+                                    break
+                            # 如果CFF的最后一个元素不是斜杠
+                            if self._ClientFileFolder[-1] != "/":
+                                self._ClientFileFolder += "/"
+                            with open(self._ClientFileFolder + filename, 'wb') as f:
+                                f.write(b64decode(in_data))
+                            self.ui.CtE.append(filename + " 传输完成")
+                        else:
                             break
-                    # 如果CFF的最后一个元素不是斜杠
-                    if self._ClientFileFolder[-1] != "/":
-                        self._ClientFileFolder += "/"
-                    with open(self._ClientFileFolder + filename, 'wb') as f:
-                        f.write(b64decode(in_data))
-                    self.ui.CtE.append(filename + " 传输完成")
+        except ConnectionRefusedError as e:
+            self.ui.statusBar.showMessage("数据接收连接失败")
+            self.ui.CtB8.setText("开启服务")
+            print(e)
+            return
+        self.ui.CtE.append("文件接收结束")
+        self.ui.CtB8.setText("开启服务")
 
-        self.ui.CtE.append("结束")
+    # -------------自定槽函数------------
+    @pyqtSlot(int)
+    def do_setPort(self, value):
+        if self.ui.Stab.isVisible():  # 如果Server的tab可见 就把对话框传来的数值赋给server 并初始化StE
+            self._ServerPort = value
+            self.initStE()
+        else:
+            self._ClientConnPort = value
+            self.initCtE()
 
+    @pyqtSlot(int)
+    def do_setThreadnum(self, value):
+        if self.ui.Stab.isVisible():
+            self._ServerThreadNum = value
+            self.initStE()
+        else:
+            self._ClientThreadNum = value  # 否则赋值给client 并初始化CtE
+            self.initCtE()
 
-# -------------自定槽函数------------
-@pyqtSlot(int)
-def do_setPort(self, value):
-    if self.ui.Stab.isVisible():  # 如果Server的tab可见 就把对话框传来的数值赋给server 并初始化StE
-        self._ServerPort = value
+    @pyqtSlot(str)
+    def do_setText2(self, text):
+        self._ServerText2Send = text
         self.initStE()
-    else:
-        self._ClientConnPort = value
-        self.initCtE()
-
-
-@pyqtSlot(int)
-def do_setThreadnum(self, value):
-    if self.ui.Stab.isVisible():
-        self._ServerThreadNum = value
-        self.initStE()
-    else:
-        self._ClientThreadNum = value  # 否则赋值给client 并初始化CtE
-        self.initCtE()
-
-
-@pyqtSlot(str)
-def do_setText2(self, text):
-    self._ServerText2Send = text
-    self.initStE()
 
 
 if __name__ == '__main__':

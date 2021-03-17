@@ -106,6 +106,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.StB8, 3, 1, 1, 1)
         self.gridLayout_3.addWidget(self.Sgb, 0, 0, 1, 1)
         self.StE = QtWidgets.QTextEdit(self.Stab)
+        self.StE.setStyleSheet("background-color: rgb(0, 0, 0);")
         self.StE.setObjectName("StE")
         self.gridLayout_3.addWidget(self.StE, 1, 0, 1, 1)
         self.tabWidget.addTab(self.Stab, "")
@@ -176,14 +177,18 @@ class Ui_MainWindow(object):
         self.gridLayout_4.addWidget(self.CtB8, 3, 1, 1, 1)
         self.gridLayout_5.addWidget(self.Cgb, 0, 0, 1, 1)
         self.CtE = QtWidgets.QTextEdit(self.Ctab)
+        self.CtE.setStyleSheet("background-color: rgb(0, 0, 0);")
         self.CtE.setObjectName("CtE")
         self.gridLayout_5.addWidget(self.CtE, 1, 0, 1, 1)
         self.tabWidget.addTab(self.Ctab, "")
         self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
+        self.statusBar = QtWidgets.QStatusBar(MainWindow)
+        self.statusBar.setObjectName("statusBar")
+        MainWindow.setStatusBar(self.statusBar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
